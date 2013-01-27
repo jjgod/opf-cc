@@ -20,11 +20,6 @@ OPF (Open Packaging Format) 转换工具，支持 epub 和 mobi 格式文件。�
 - [Info-zip](http://www.info-zip.org) (OS X 自带，用于 epub 包装)
 - [KindleGen](http://www.amazon.com/gp/feature.html?ie=UTF8&docId=1000765211) (用于 mobi 包装)
 
-已知问题
---------
-
-- 文件元数据 (书名、作者和简介等) 暂时不能转换。
-
 致谢
 ----
 

@@ -74,7 +74,7 @@ def find_opf_path(input_path):
 
 def find_files_to_convert(input_path, opf_path):
     opf = parse(opf_path)
-    files = []
+    files = [opf_path]
     types = ['application/x-dtbncx+xml', 'application/xhtml+xml', 'text/x-oeb1-document']
     for item in opf.iter('item'):
         media_type = item.attrib['media-type']
@@ -94,6 +94,15 @@ def convert_files_in_place(converter, files):
             for text in ncx.iter('text'):
                 text.text = converter.convert(text.text.encode('utf-8')).decode('utf-8')
             ncx.write(f, encoding='utf-8', xml_declaration=True, pretty_print=True)
+        elif ext == '.opf':
+            # Quick and dirty way to convert metadata because lxml.html doesn't work
+            opf = open(f)
+            opf_contents = opf.read().split('</metadata>')
+            opf.close()
+            opf_contents[0] = converter.convert(opf_contents[0])
+            opf = open(f, 'w')
+            opf.write('</metadata>'.join(opf_contents))
+            opf.close()
         else:
             output_file = '%s.tmp' % f
             cmd = "opencc -i '%s' -o '%s' -c zht2zhs.ini" % (f, output_file)

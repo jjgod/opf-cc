@@ -8,7 +8,7 @@ OPF (Open Packaging Format) 转换工具，支持 epub 和 mobi 格式文件。�
 
     $ git clone https://github.com/jjgod/opf-cc.git
     $ cd opf-cc
-    $ opf-cc.py <book.epub | book.mobi>
+    $ ./opf-cc.py <book.epub | book.mobi>
 
 将指定文件转换为简体并在同一目录下生成新的文件，如果转换后的文件名与之前一致则将旧文件改名。
 

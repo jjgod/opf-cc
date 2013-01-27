@@ -17,7 +17,8 @@ OPF (Open Packaging Format) 转换工具，支持 epub 和 mobi 格式文件。�
 
 - [OpenCC](https://github.com/BYVoid/OpenCC) (请从 git 编译安装)
 - [lxml](http://lxml.de) (`sudo pip install lxml` 或 `sudo easy_install lxml`)
-- [Info-zip](http://www.info-zip.org) (OS X 自带)
+- [Info-zip](http://www.info-zip.org) (OS X 自带，用于 epub 包装)
+- [KindleGen](http://www.amazon.com/gp/feature.html?ie=UTF8&docId=1000765211) (用于 mobi 包装)
 
 已知问题
 --------

@@ -110,6 +110,15 @@ def convert_files_in_place(converter, files):
             os.system(cmd)
             os.rename(output_file, f)
 
+def add_dir_to_zip(archive, base, current):
+    for f in os.listdir(os.path.join(base, current)):
+        filename = os.path.join(current, f)
+        fullname = os.path.join(base, filename)
+        if os.path.isdir(fullname):
+            add_dir_to_zip(archive, base, filename)
+        else:
+            archive.write(fullname, filename)
+
 def repack_files(input_path, output_file_path, opf_path):
     (trunk, ext) = os.path.splitext(output_file_path)
     if os.path.isfile(output_file_path):
@@ -117,17 +126,19 @@ def repack_files(input_path, output_file_path, opf_path):
         print "Renaming existing file to %s" % old_file_path
         os.rename(output_file_path, old_file_path)
     print "Repacking converted files into %s" % output_file_path
-    cmd_args = []
     if ext == '.epub':
         # epub is just normal zip file with a special extension
         cmd_args = ['zip', '-r', output_file_path, '.']
+        epub = zipfile.ZipFile(output_file_path, "w", zipfile.ZIP_DEFLATED)
+        add_dir_to_zip(epub, input_path, '.')
+        epub.close()
     else:
         # Otherwise it's a mobi file, use kindlegen to repack
+        cmd_args = []
         output_file = os.path.basename(output_file_path)
         cmd_args = ['kindlegen', opf_path, '-c2', '-verbose', '-o', output_file]
-
-    p = subprocess.Popen(cmd_args, cwd=input_path)
-    p.wait()
+        p = subprocess.Popen(cmd_args, cwd=input_path)
+        p.wait()
 
     if ext == '.mobi':
         # KindleGen puts output file under the same directory as the input file.

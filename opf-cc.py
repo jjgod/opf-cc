@@ -2,7 +2,7 @@
 # Convert files in Open Packaging Format from Traditional Chinese
 # to Simplified Chinese.
 
-import sys, os, zipfile, re, codecs, subprocess, glob
+import sys, os, zipfile, re, codecs, subprocess, glob, shutil
 import opencc
 import mobiunpack
 import kindlestrip
@@ -141,8 +141,7 @@ def repack_files(input_path, output_file_path, opf_path):
         outf.close()
 
     print "Removing temporary directory %s" % input_path
-    cmd = "rm -rf '%s'" % input_path
-    os.system(cmd)
+    shutil.rmtree(input_path)
 
 if len(sys.argv) < 2:
     print "usage: %s <book.epub|book.mobi>"

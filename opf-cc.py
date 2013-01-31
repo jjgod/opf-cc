@@ -31,7 +31,7 @@ def find_paths(converter):
         print "Try extracting %s to %s" % (input_path, output_path)
         if ext == ".epub":
             zf = zipfile.ZipFile(input_path)
-            zf.extractall(output_path)
+            zf.extractall(output_path.decode('utf-8'))
         else:
             # Otherwise it's a mobi, use mobiunpack
             mobiunpack.unpackBook(input_path, output_path)
@@ -59,7 +59,7 @@ def find_output_path(input_path):
 def find_opf_path(input_path):
     metadata_file = os.path.join(input_path, "META-INF", "container.xml")
     if os.path.isfile(metadata_file):
-        metadata = lxml.etree.parse(metadata_file)
+        metadata = parse(metadata_file)
         for root_file in metadata.iter('rootfile'):
             opf_file = root_file.attrib['full-path']
             opf_path = os.path.join(input_path, opf_file)
@@ -92,8 +92,9 @@ def convert_files_in_place(converter, files):
         ext = os.path.splitext(f)[1]
         if ext == '.ncx':
             ncx = lxml.etree.parse(f)
-            for text in ncx.iter('text'):
-                text.text = converter.convert(text.text.encode('utf-8')).decode('utf-8')
+            for text in ncx.iter():
+                if text.tag.startswith('{') and text.tag.rsplit('}', 1)[-1] == "text":
+                    text.text = converter.convert(text.text.encode('utf-8')).decode('utf-8')
             ncx.write(f, encoding='utf-8', xml_declaration=True, pretty_print=True)
         elif ext == '.opf':
             # Quick and dirty way to convert metadata because lxml.html doesn't work

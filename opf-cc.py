@@ -5,6 +5,7 @@
 import sys, os, zipfile, re, codecs, subprocess, glob
 import opencc
 import mobiunpack
+import kindlestrip
 import lxml
 from lxml.html import parse
 
@@ -128,13 +129,16 @@ def repack_files(input_path, output_file_path, opf_path):
     p = subprocess.Popen(cmd_args, cwd=input_path)
     p.wait()
 
-    # Stupid kindlegen puts output file under the same directory as the input opf
-    # file, we need to move it outside of this temporary directory before removing
-    # that directory
     if ext == '.mobi':
-        os.rename(os.path.join(input_path,
-                               os.path.basename(output_file_path)),
-                  output_file_path)
+        # KindleGen puts output file under the same directory as the input file.
+        original_output_path = os.path.join(input_path,
+                               os.path.basename(output_file_path))
+        # KindleGen introduced redundant data, use kindlestrip to remove that.
+        data_file = file(original_output_path, 'rb').read()
+        strippedFile = kindlestrip.SectionStripper(data_file)
+        outf = file(output_file_path, 'wb')
+        outf.write(strippedFile.getResult())
+        outf.close()
 
     print "Removing temporary directory %s" % input_path
     cmd = "rm -rf '%s'" % input_path

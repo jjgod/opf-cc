@@ -27,4 +27,5 @@ OPF (Open Packaging Format) 转换工具，支持 epub 和 mobi 格式文件。�
 
 - [OpenCC](https://github.com/BYVoid/OpenCC)
 - [MobiUnpack](http://www.mobileread.com/forums/showthread.php?t=61986)
+- [kindlestrip](http://www.mobileread.com/forums/showthread.php?t=96903)
 

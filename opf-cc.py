@@ -81,7 +81,7 @@ def find_files_to_convert(input_path, opf_path):
         media_type = item.attrib['media-type']
         if media_type in types:
             href = item.attrib['href']
-            path = os.path.join(input_path, href.encode(fsenc))
+            path = os.path.join(os.path.dirname(opf_path), href.encode(fsenc))
             if os.path.isfile(path):
                 files.append(path)
     return files
@@ -91,7 +91,10 @@ def convert_files_in_place(converter, files):
         print 'Converting file: %s' % f
         ext = os.path.splitext(f)[1]
         if ext == '.ncx':
-            ncx = lxml.etree.parse(f)
+            try:
+                ncx = lxml.etree.parse(f)
+            except lxml.etree.XMLSyntaxError as e:
+                print e.filename, e.lineno, e.msg, e.offset
             for text in ncx.iter():
                 if text.tag.startswith('{') and text.tag.rsplit('}', 1)[-1] == "text":
                     text.text = converter.convert(text.text.encode('utf-8')).decode('utf-8')
@@ -101,6 +104,10 @@ def convert_files_in_place(converter, files):
             opf = open(f)
             opf_contents = opf.read().split('</metadata>')
             opf.close()
+            opf_contents[0] = opf_contents[0].replace('<dc:language>zh-TW</dc:language>',
+                                                      '<dc:language>zh-Hans</dc:language>')
+            opf_contents[0] = opf_contents[0].replace('<dc:language>zh-Hant</dc:language>',
+                                                      '<dc:language>zh-Hans</dc:language>')
             opf_contents[0] = converter.convert(opf_contents[0])
             opf = open(f, 'w')
             opf.write('</metadata>'.join(opf_contents))

@@ -114,7 +114,7 @@ def convert_files_in_place(converter, files):
             opf.close()
         else:
             output_file = '%s.tmp' % f
-            cmd = "opencc -i '%s' -o '%s' -c zht2zhs.ini" % (f, output_file)
+            cmd = "opencc -i '%s' -o '%s' -c s2t.json" % (f, output_file)
             os.system(cmd)
             os.rename(output_file, f)
 
@@ -166,10 +166,7 @@ if len(sys.argv) < 2:
     print "usage: %s <book.epub|book.mobi>"
     sys.exit(1)
 
-with opencc.OpenCC(config="zht2zhs.ini") as converter:
-    for path in ['trad_to_simp_characters.ocd',
-                 'trad_to_simp_phrases.ocd']:
-        converter.dict_load(path, opencc.DictType.DATRIE)
+with opencc.OpenCC(config="s2t.json") as converter:
     (input_file_path, extracted_path, output_file_path) = find_paths(converter)
     opf_path = find_opf_path(extracted_path)
 
